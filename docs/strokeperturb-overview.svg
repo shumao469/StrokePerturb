@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 340" width="1120" height="340" role="img" aria-labelledby="title description">
+  <title id="title">StrokePerturb response prediction and evaluation</title>
+  <desc id="description">Aligned response components are prepared separately for the inner out-of-fold populations and the outer query populations. Inner predictions and observed inner responses determine the mixture weights. The frozen weights and outer components produce the held-out RNA response. Scoring pairs this prediction with independently supplied outer truth.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0l8 4-8 4z" fill="#566b7c"/>
+    </marker>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #1e3547; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .label { font-size: 17px; font-weight: 700; }
+      .annotation { font-size: 14px; fill: #4d6374; }
+      .outline { fill: none; stroke: #d2dce1; stroke-width: 1.4; }
+      .flow { fill: none; stroke: #566b7c; stroke-width: 1.6; }
+    </style>
+  </defs>
+
+  <rect width="1120" height="340" fill="#fff"/>
+  <path class="outline" d="M27 67H1093M27 298H1093"/>
+
+  <g aria-label="Aligned response components">
+    <rect x="28" y="29" width="20" height="4" rx="2" fill="#406d91"/>
+    <text class="heading" x="28" y="55">Response components</text>
+    <text class="annotation" x="28" y="93">Precomputed on a shared ordered gene axis</text>
+
+    <g transform="translate(28 111)">
+      <rect width="41" height="30" rx="6" fill="#e5edf4"/>
+      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#315c81">B</text>
+      <text x="55" y="21" font-size="16">Shared reference</text>
+    </g>
+    <g transform="translate(28 150)">
+      <rect width="41" height="30" rx="6" fill="#e9e4f1"/>
+      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#674f8a">U</text>
+      <text x="55" y="21" font-size="16">Low-rank response</text>
+    </g>
+    <g transform="translate(28 189)">
+      <rect width="41" height="30" rx="6" fill="#f3e9d9"/>
+      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#89591f">C</text>
+      <text x="55" y="21" font-size="16">Composition-associated change</text>
+    </g>
+    <g transform="translate(28 228)">
+      <rect width="41" height="30" rx="6" fill="#e1eeea"/>
+      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#23685c">W</text>
+      <text x="55" y="21" font-size="16">Within-class RNA residual</text>
+    </g>
+  </g>
+
+  <g aria-label="Calibration on inner out-of-fold populations">
+    <rect x="379" y="29" width="20" height="4" rx="2" fill="#755b95"/>
+    <text class="heading" x="379" y="55">Inner-fold calibration</text>
+    <rect x="379" y="111" width="318" height="86" rx="8" fill="#f2eff6"/>
+    <path d="M379 120v68" stroke="#755b95" stroke-width="4" stroke-linecap="round"/>
+    <text class="label" x="397" y="140">Fit mixture weights</text>
+    <text class="annotation" x="397" y="163">Inner out-of-fold components and</text>
+    <text class="annotation" x="397" y="182">observed inner RNA responses</text>
+    <path class="flow" d="M337 153h34" marker-end="url(#arrow)"/>
+    <rect x="379" y="215" width="318" height="43" rx="7" fill="#fff" stroke="#cfc4df"/>
+    <text x="538" y="241" text-anchor="middle" font-size="15" font-weight="700" fill="#604486">B + (1 − λ)aU + λ(bC + cW)</text>
+  </g>
+
+  <g aria-label="Held-out prediction and separate scoring">
+    <rect x="755" y="29" width="20" height="4" rx="2" fill="#2b7568"/>
+    <text class="heading" x="755" y="55">Held-out evaluation</text>
+
+    <rect x="755" y="111" width="337" height="70" rx="8" fill="#e8f1ee"/>
+    <path d="M755 120v52" stroke="#2b7568" stroke-width="4" stroke-linecap="round"/>
+    <text class="label" x="773" y="137">Predict outer RNA response</text>
+    <text class="annotation" x="773" y="160">Frozen weights + outer query components</text>
+    <path class="flow" d="M705 145h42" marker-end="url(#arrow)"/>
+    <path class="flow" d="M923.5 184v22" marker-end="url(#arrow)"/>
+
+    <rect x="755" y="215" width="337" height="63" rx="8" fill="#fff" stroke="#c5d9d3"/>
+    <text class="label" x="773" y="241">Score with observed outer responses</text>
+    <text class="annotation" x="773" y="263">Downstream and target-specific MSE</text>
+  </g>
+
+  <text class="annotation" x="28" y="323">Joint holdout excludes either held-out identity from training. Outer query rows contain both held-out identities.</text>
+</svg>

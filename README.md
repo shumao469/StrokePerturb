@@ -1,63 +1,94 @@
 # StrokePerturb
 
-StrokePerturb assembles gene-level RNA response forecasts from a reference term, a low-rank response, and two full-RNA components for composition and within-class expression. The repository contains the numerical calibration and scoring code, a synthetic quick start, and replays for public perturbation and expression datasets.
+**Predicting population-level transcriptional responses under animal and target holdout**
 
-```mermaid
-flowchart LR
-    A[Aligned reference and response components] --> B[Animal and target holdout]
-    B --> C[Select mixture weights on inner out-of-fold rows]
-    C --> D[Apply frozen weights to outer components]
-    D --> E[Score RNA response and target-specific response]
-```
+StrokePerturb combines a reference term, a low-rank response, and two full-RNA components that represent composition-associated change and within-class expression residuals. It calibrates their contributions on inner out-of-fold predictions and applies the selected weights to held-out animal–target populations.
 
-The command line consumes aligned component arrays. The Python package also exposes the training-label decomposition and fixed linear kernel primitives used to construct components. End-to-end reconstruction of the original mouse checkpoint requires the original upstream inputs, feature construction, and audit workflow. The public cell-line replays fit within their own assays. The Lrg1 and ISP replays quantify measured expression contrasts in separate stroke cohorts.
+![StrokePerturb workflow from response components to inner-fold calibration and held-out evaluation](docs/strokeperturb-overview.svg)
 
-## Preparation
+## Installation
 
-Python 3.11 or newer. The core and all examples run on CPU.
+Python 3.11 or later. The core and reproduction scripts run on CPU.
 
 ```bash
-python -m venv .venv
-```
-
-Activate it with `source .venv/bin/activate` on macOS/Linux or `.venv\Scripts\Activate.ps1` in Windows PowerShell. From the repository root, install the core or use the reproduction dependencies.
-
-```bash
+git clone https://github.com/shumao469/StrokePerturb.git
+cd StrokePerturb
 python -m pip install -e .
-python -m strokeperturb demo
 ```
+
+For the public dataset replays and plotting, run `python -m pip install -r requirements.txt` from the repository root.
+
+## Model input
+
+The command-line interface accepts `.npz` files containing aligned response components. Each row represents one animal–target population.
+
+| Key | Content |
+| --- | --- |
+| `source`, `target` | Unicode animal and target identifiers, one pair per row |
+| `genes` | Ordered Unicode gene identifiers, shared across all component arrays |
+| `background`, `U`, `C`, `W` | Population × gene matrices for the reference, low-rank response, composition-associated change and within-class residual |
+| `truth` | Observed RNA change on the same axes. Supply it for calibration and scoring. The prediction input omits this key. |
+
+In the original assay, separate halves of matched non-targeting controls serve the query and evaluation stages. Full replay of the original mouse checkpoint requires its scope-specific upstream inputs and audit workflow. See the [model specification](docs/model.md) for data shapes, control construction, and endpoint definitions.
+
+## Features
+
+- Joint holdout by animal and perturbation target.
+- C/W training-label decomposition, fixed linear residual kernels and rank-16 response projection.
+- Inner-fold calibration of `B + (1 − λ)aU + λ(bC + cW)` and comparison with the strongest single response family selected on those folds.
+- Target-macro MSE for downstream and within-animal-centred responses, with the perturbed gene masked.
+
+## Calibrate, predict and score
+
+Build the inner component bundle from out-of-fold predictions restricted to outer training data. Freeze the calibration before applying it to the outer query. The scorer rebuilds the fixed forecast from the same outer components and calibration, then evaluates it against the supplied truth.
 
 ```bash
-python -m pip install -r requirements.txt
+strokeperturb calibrate inner_oof.npz calibration.json
+strokeperturb predict outer_components.npz forecasts.npz --calibration calibration.json
+strokeperturb score outer_with_truth.npz scores.json --calibration calibration.json
 ```
 
-## Repository layout
+## Python example
 
-```text
-strokeperturb/   component construction, calibration, losses, and fold construction
-reproduce/       dataset manifests, analysis entry points, and summary plots
-docs/            model inputs, endpoint definitions, and evidence scope
+This synthetic example holds out one animal and two targets. The arrays illustrate the API using precomputed components.
+
+```python
+import numpy as np
+from strokeperturb import apply_calibration, calibrate_inner, score_outer
+
+genes = ["A", "B", "C", "D", "marker"]
+zero = np.zeros((2, len(genes)))
+w = zero.copy()
+w[:, -1] = [-1, 1]
+
+inner = {"background": zero, "U": zero, "C": zero, "W": w}
+frozen = calibrate_inner(0.5 * w, inner, ["train"] * 2, ["A", "B"], genes)
+
+outer = {**inner, "W": 2 * w}
+axes = (["test"] * 2, ["C", "D"], genes)
+forecasts = apply_calibration(outer, *axes, frozen)
+report, _ = score_outer(w, outer, *axes, frozen)
+
+print(forecasts["candidate"].shape)
+print(report["scores"]["candidate"])
 ```
 
-## Preparing datasets and reproducing results
+## Demo and public replays
 
-Download inputs from the public sources in the [reproduction guide](reproduce/README.md). The guide describes the analysis unit, fixed comparisons, and commands for each replay. Store input archives in `data/` and write generated tables and plots under `res/`.
+Run `python -m strokeperturb demo` for a deterministic example that prints split sizes, selected coefficients and scores. The [reproduction guide](reproduce/README.md) gives download links, commands and expected results for the workflows below.
 
-| Figure | Entry point | Reproduced computation |
-| --- | --- | --- |
-| 1–2, method demonstration | `python -m strokeperturb demo` | Synthetic example of the inner calibration and outer scoring workflow |
-| 3a–e | [`reproduce/fig3/`](reproduce/fig3/) | Norman K562 whole-pair holdout with no-change, additive, fitted ridge, and rank-16 response projection |
-| 3f | [`gse245386_lrg1.py`](reproduce/fig3/gse245386_lrg1.py) | Animal-level measured Lrg1 genotype contrast after stroke |
-| 4a–f | [`combosciplex.py`](reproduce/fig4/combosciplex.py) | A549 whole-pair holdout, with same-input linear and composition/within-state fits |
-| 4h | [`gse168934_isp.py`](reproduce/fig4/gse168934_isp.py) | Animal-level measured ISP–vehicle expression contrast after stroke |
-| 5 | [`h9_interpolation.py`](reproduce/fig5/h9_interpolation.py) | Public H9 endpoint-only mean interpolation and endpoint-carry baselines |
+| Dataset | Workflow |
+| --- | --- |
+| Norman K562 · GSE133344 | Whole-pair genetic perturbation prediction with measured singles and no-change, additive and linear baselines |
+| ComboSciPlex A549 · GSE206741 | Held-out drug-pair prediction with same-input fitted linear and C/W comparisons |
+| Lrg1 · GSE245386 | Measured animal-level KO–WT expression contrast after stroke |
+| ISP · GSE168934 | Measured animal-level post-stroke drug–vehicle expression contrast |
+| H9 · GSE75748 | Endpoint-only interpolation of group mean expression at intermediate time points |
 
-The numerical replays use the public comparison designs and their recorded gene axes. Summary plots cover selected analysis panels. Full manuscript slide assembly and the original reserved outcomes are outside this repository.
+The cell-line workflows fit within their own assays. The Lrg1 and ISP workflows summarize observed expression, and the H9 workflow evaluates a fixed interpolation rule.
 
-## Model interface
+## Citation and contact
 
-See the [component and evaluation specification](docs/model.md) for the ordered NPZ schema, fitted coefficient grid, and the distinction between the original mouse design and public comparisons.
+When referring to the software, cite the [StrokePerturb repository](https://github.com/shumao469/StrokePerturb) and the commit used. Cite the original studies for any data or derived results using the references in the [reproduction guide](reproduce/README.md).
 
-## Data citations
-
-The reproduction guide links the individual data records and associated primary papers. Cite each underlying study when using its data or derived results.
+Use [GitHub Issues](https://github.com/shumao469/StrokePerturb/issues) for questions and reproducibility reports.
