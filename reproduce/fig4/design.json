@@ -1,0 +1,20 @@
+{
+  "schema": "strokeperturb_public_combo_adaptation_design_v1",
+  "scope": "Retrospective A549 ComboSciPlex GSE206741, separate public cell-line experiment",
+  "development_role": "A new transparent composition and within-state decomposition inspired by the archived mouse architecture. Original checkpoints are not used.",
+  "input_gene_axis": "the same upstream 5,000-gene processed public archive axis used in v6",
+  "score_axis": "seven combinations with both constituent singles in the same experiment; leave one whole combination out; all three scored wells per combination",
+  "shared_vehicle": "the same three vehicle wells across conditions. Controls are shared between prediction inputs and response definition, as in v6.",
+  "state_definition": "Use only control-cell counts. Compute per-cell log1p(CP10K), select 128 genes with highest variance over pooled vehicle cells, z-score those features with vehicle statistics, and cluster those vehicle cells into four states with k-means (random_state=20261113, n_init=20). Assign all measured cells using the frozen nearest control centroid. Vehicle states are transcriptional clusters, with no cell-type annotation.",
+  "well_decomposition": "Pool counts per state and compute state fractions by library mass. Estimate one vehicle expression composition per state by pooling all vehicle counts within that state. For each well, replace state expression with these reference proportions while retaining the well's state fractions, then take log1p(CP10K). Define C as its difference from the mean of the three analogous vehicle-well vectors. Define W as the difference between measured and replacement pseudobulk, centered on the mean vehicle residual. By construction C + W equals the original vehicle-referenced log-pseudobulk response.",
+  "candidate": "Composition and within-state additive adaptation: sum constituent single-agent C vectors and sum W vectors, then fit one scalar for each branch from the six other combination-mean vectors. Fit constrained least squares with both weights in [0,1] on the same 5,000 genes and six fold-training pairs. The held-out input uses only measured constituent single-agent profiles and vehicle-derived references.",
+  "comparators": [
+    "No change (all zero)",
+    "Uncalibrated additive (sum of constituent measured responses)",
+    "v6 one-weight bounded additive shrinkage, refit on the same six combination means",
+    "Two-weight additive regression, order the constituents by measured single-agent RMS (stable compound ID on ties); fit both coefficients in [0,1] using the six training combinations"
+  ],
+  "freeze": "Candidate definition and diagnostics declared before executing v7. Public v6 baseline outcomes were already known. Every v7 held-out array is excluded from fitting and scored after the seven predictions have been recorded and hashed.",
+  "endpoint": "v6 MSE of log1p(CP10K) vehicle-referenced well pseudobulk. Equal weight across genes, wells within each pair, and pairs. No significance claims.",
+  "scope_boundary": "One human cancer cell line; source-preselected gene panel; public assay rather than stroke intervention data."
+}
