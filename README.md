@@ -1,4 +1,5 @@
 # StrokePerturb
+<img width="447" height="447" alt="image" src="https://github.com/user-attachments/assets/e9ae24e1-55e5-4297-8762-18919caefb94" />
 
 **Predicting population-level transcriptional responses under animal and target holdout**
 
@@ -73,7 +74,7 @@ print(forecasts["candidate"].shape)
 print(report["scores"]["candidate"])
 ```
 
-## Demo and public replays
+## Public replays
 
 Run `python -m strokeperturb demo` for a deterministic example that prints split sizes, selected coefficients and scores. The [reproduction guide](reproduce/README.md) gives download links, commands and expected results for the workflows below.
 
@@ -89,6 +90,6 @@ The cell-line workflows fit within their own assays. The Lrg1 and ISP workflows 
 
 ## Citation and contact
 
-When referring to the software, cite the [StrokePerturb repository](https://github.com/shumao469/StrokePerturb) and the commit used. Cite the original studies for any data or derived results using the references in the [reproduction guide](reproduce/README.md).
+When referring to the software, cite the [StrokePerturb repository](https://github.com/shumao469/StrokePerturb) and the commit used. Cite the original studies for any data or derived results using the references in the [reproduction guide](reproduce/README.md). Copyright, Fudan University, Xulab. shumaoxu@fudan.edu.cn
 
 Use [GitHub Issues](https://github.com/shumao469/StrokePerturb/issues) for questions and reproducibility reports.
