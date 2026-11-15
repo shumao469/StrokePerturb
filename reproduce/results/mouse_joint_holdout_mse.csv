@@ -1,0 +1,11 @@
+scope,populations,targets,aggregation,endpoint,method,coefficient_on_W,MSE,no_change_MSE,relative_gain_over_no_change_percent
+All,56,40,Target macro,downstream_MSE,no_change,0,0.0036197714385545633,0.0036197714385545633,0.0
+All,56,40,Target macro,downstream_MSE,calibrated_low_rank,0,0.0036197714385545633,0.0036197714385545633,0.0
+All,56,40,Target macro,downstream_MSE,calibrated_full_gene,0.5,0.0036197834563710765,0.0036197714385545633,-0.00033200484388579523
+All,56,40,Target macro,downstream_MSE,selected_mixture,0.5,0.0036197834563710765,0.0036197714385545633,-0.00033200484388579523
+All,56,40,Target macro,downstream_MSE,unit_residual,1,0.003619807381526309,0.0036197714385545633,-0.0009929624661787957
+All,56,40,Target macro,target_specific_downstream_MSE,no_change,0,0.003383814665731968,0.003383814665731968,0.0
+All,56,40,Target macro,target_specific_downstream_MSE,calibrated_low_rank,0,0.003383814665731968,0.003383814665731968,0.0
+All,56,40,Target macro,target_specific_downstream_MSE,calibrated_full_gene,0.5,0.0033838142132983384,0.003383814665731968,1.337052038739551e-05
+All,56,40,Target macro,target_specific_downstream_MSE,selected_mixture,0.5,0.0033838142132983384,0.003383814665731968,1.337052038739551e-05
+All,56,40,Target macro,target_specific_downstream_MSE,unit_residual,1,0.003383825363611948,0.003383814665731968,-0.00031614851984003504

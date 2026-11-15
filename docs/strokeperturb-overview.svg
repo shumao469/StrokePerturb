@@ -1,78 +1,106 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 340" width="1120" height="340" role="img" aria-labelledby="title description">
-  <title id="title">StrokePerturb response prediction and evaluation</title>
-  <desc id="description">Aligned response components are prepared separately for the inner out-of-fold populations and the outer query populations. Inner predictions and observed inner responses determine the mixture weights. The frozen weights and outer components produce the held-out RNA response. Scoring pairs this prediction with independently supplied outer truth.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="510" viewBox="0 0 1120 510" role="img" aria-labelledby="title desc">
+  <title id="title">StrokePerturb architecture for animal–target response prediction</title>
+  <desc id="desc">Matched non-targeting control RNA and a target descriptor feed low-rank, composition-associated and residual RNA response heads. Inner out-of-fold predictions determine mixture weights. Fixed weights assemble a signed whole-transcriptome forecast for a jointly held-out animal and target. Scoring compares the forecast with targeted RNA minus a disjoint control half, using masked target-macro squared error, response amplitude and signed direction.</desc>
   <defs>
-    <marker id="arrow" viewBox="0 0 8 8" refX="7.5" refY="4" markerWidth="7" markerHeight="7" orient="auto">
-      <path d="M0 0l8 4-8 4z" fill="#566b7c"/>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#557383"/>
     </marker>
     <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #1e3547; }
-      .heading { font-size: 22px; font-weight: 700; }
+      text { font-family: Arial, Helvetica, sans-serif; fill: #183043; }
+      .title { font-size: 28px; font-weight: 700; letter-spacing: -.45px; }
+      .section { font-size: 18px; font-weight: 700; }
       .label { font-size: 17px; font-weight: 700; }
-      .annotation { font-size: 14px; fill: #4d6374; }
-      .outline { fill: none; stroke: #d2dce1; stroke-width: 1.4; }
-      .flow { fill: none; stroke: #566b7c; stroke-width: 1.6; }
+      .small { font-size: 15px; fill: #3d5669; }
+      .meta { font-size: 13px; font-weight: 700; letter-spacing: .6px; fill: #295b62; }
+      .symbol { font-size: 19px; font-weight: 700; text-anchor: middle; }
+      .flow { fill: none; stroke: #557383; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .arrow { marker-end: url(#arrow); }
     </style>
   </defs>
 
-  <rect width="1120" height="340" fill="#fff"/>
-  <path class="outline" d="M27 67H1093M27 298H1093"/>
+  <rect x="1" y="1" width="1118" height="508" rx="18" fill="#fff" stroke="#d2dfe5" stroke-width="2"/>
+  <text class="title" x="31" y="46">StrokePerturb architecture</text>
+  <text class="small" x="32" y="72">Control-referenced RNA change for an animal–target population</text>
+  <rect x="818" y="27" width="272" height="30" rx="15" fill="#eaf4f4"/>
+  <text class="meta" x="954" y="47" text-anchor="middle">JOINT ANIMAL–TARGET HOLDOUT</text>
+  <text class="small" x="1090" y="75" text-anchor="end">Training excludes either held-out identity</text>
+  <path d="M31 92H1089" stroke="#dce5ea"/>
 
-  <g aria-label="Aligned response components">
-    <rect x="28" y="29" width="20" height="4" rx="2" fill="#406d91"/>
-    <text class="heading" x="28" y="55">Response components</text>
-    <text class="annotation" x="28" y="93">Precomputed on a shared ordered gene axis</text>
+  <g aria-label="Query inputs">
+    <text class="section" x="32" y="126">Query inputs</text>
 
-    <g transform="translate(28 111)">
-      <rect width="41" height="30" rx="6" fill="#e5edf4"/>
-      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#315c81">B</text>
-      <text x="55" y="21" font-size="16">Shared reference</text>
-    </g>
-    <g transform="translate(28 150)">
-      <rect width="41" height="30" rx="6" fill="#e9e4f1"/>
-      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#674f8a">U</text>
-      <text x="55" y="21" font-size="16">Low-rank response</text>
-    </g>
-    <g transform="translate(28 189)">
-      <rect width="41" height="30" rx="6" fill="#f3e9d9"/>
-      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#89591f">C</text>
-      <text x="55" y="21" font-size="16">Composition-associated change</text>
-    </g>
-    <g transform="translate(28 228)">
-      <rect width="41" height="30" rx="6" fill="#e1eeea"/>
-      <text class="label" x="20.5" y="21" text-anchor="middle" fill="#23685c">W</text>
-      <text x="55" y="21" font-size="16">Within-class RNA residual</text>
-    </g>
+    <rect x="32" y="150" width="232" height="61" rx="10" fill="#f5f8fb" stroke="#d8e3ec"/>
+    <path d="M49 167h16m-16 8h11m-11 8h16m-16 8h8" fill="none" stroke="#4b7795" stroke-width="2.6" stroke-linecap="round"/>
+    <text class="label" x="79" y="176">Matched control RNA</text>
+    <text class="small" x="79" y="196">Same animal · NTC half 0</text>
+
+    <rect x="32" y="225" width="232" height="61" rx="10" fill="#f5f8fb" stroke="#d8e3ec"/>
+    <path d="M49 253l8-9h6l7 9-7 9h-6z" fill="#edf3fa" stroke="#4b7795" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="59.5" cy="253" r="2.4" fill="#4b7795"/>
+    <text class="label" x="79" y="251">Target descriptor</text>
+    <text class="small" x="79" y="271">One perturbation target</text>
+
+    <path class="flow" d="M264 181h18v75h-18"/>
+    <path class="flow" d="M282 219h13m0-46v142"/>
+    <path class="flow arrow" d="M295 173h12"/>
+    <path class="flow arrow" d="M295 244h12"/>
+    <path class="flow arrow" d="M295 315h12"/>
   </g>
 
-  <g aria-label="Calibration on inner out-of-fold populations">
-    <rect x="379" y="29" width="20" height="4" rx="2" fill="#755b95"/>
-    <text class="heading" x="379" y="55">Inner-fold calibration</text>
-    <rect x="379" y="111" width="318" height="86" rx="8" fill="#f2eff6"/>
-    <path d="M379 120v68" stroke="#755b95" stroke-width="4" stroke-linecap="round"/>
-    <text class="label" x="397" y="140">Fit mixture weights</text>
-    <text class="annotation" x="397" y="163">Inner out-of-fold components and</text>
-    <text class="annotation" x="397" y="182">observed inner RNA responses</text>
-    <path class="flow" d="M337 153h34" marker-end="url(#arrow)"/>
-    <rect x="379" y="215" width="318" height="43" rx="7" fill="#fff" stroke="#cfc4df"/>
-    <text x="538" y="241" text-anchor="middle" font-size="15" font-weight="700" fill="#604486">B + (1 − λ)aU + λ(bC + cW)</text>
+  <g aria-label="RNA response components">
+    <text class="section" x="312" y="126">Response heads</text>
+
+    <rect x="312" y="143" width="340" height="60" rx="10" fill="#f1f6fc" stroke="#d2e1f2"/>
+    <rect x="325" y="154" width="39" height="39" rx="10" fill="#dbe9f9"/>
+    <text class="symbol" x="344.5" y="180" fill="#255889" style="fill:#255889">U</text>
+    <text class="label" x="376" y="168">Low-rank response</text>
+    <text class="small" x="376" y="189">Rank-16 output decoded to all genes</text>
+
+    <rect x="312" y="214" width="340" height="60" rx="10" fill="#eef7f5" stroke="#c9e5df"/>
+    <rect x="325" y="225" width="39" height="39" rx="10" fill="#d4eee7"/>
+    <text class="symbol" x="344.5" y="251" fill="#175e54" style="fill:#175e54">C</text>
+    <text class="label" x="376" y="239">Composition-associated change</text>
+    <text class="small" x="376" y="260">Full-gene head · subclass reweighting</text>
+
+    <rect x="312" y="285" width="340" height="60" rx="10" fill="#fbf4ed" stroke="#ebdccc"/>
+    <rect x="325" y="296" width="39" height="39" rx="10" fill="#f3e1d0"/>
+    <text class="symbol" x="344.5" y="322" fill="#83491e" style="fill:#83491e">W</text>
+    <text class="label" x="376" y="310">Residual RNA change</text>
+    <text class="small" x="376" y="331">Full-gene head · population residual</text>
+
+    <path class="flow" d="M652 173h22v142h-22M652 244h22"/>
+    <path class="flow arrow" d="M674 268h32"/>
   </g>
 
-  <g aria-label="Held-out prediction and separate scoring">
-    <rect x="755" y="29" width="20" height="4" rx="2" fill="#2b7568"/>
-    <text class="heading" x="755" y="55">Held-out evaluation</text>
+  <g aria-label="Nested calibration and fixed forecast">
+    <text class="section" x="714" y="126">Calibration and prediction</text>
 
-    <rect x="755" y="111" width="337" height="70" rx="8" fill="#e8f1ee"/>
-    <path d="M755 120v52" stroke="#2b7568" stroke-width="4" stroke-linecap="round"/>
-    <text class="label" x="773" y="137">Predict outer RNA response</text>
-    <text class="annotation" x="773" y="160">Frozen weights + outer query components</text>
-    <path class="flow" d="M705 145h42" marker-end="url(#arrow)"/>
-    <path class="flow" d="M923.5 184v22" marker-end="url(#arrow)"/>
+    <rect x="714" y="143" width="376" height="75" rx="10" fill="#f5f8fb" stroke="#d8e3ec"/>
+    <text class="label" x="732" y="171">Fit weights on inner folds</text>
+    <text class="small" x="732" y="192">Out-of-fold predictions within outer training data</text>
 
-    <rect x="755" y="215" width="337" height="63" rx="8" fill="#fff" stroke="#c5d9d3"/>
-    <text class="label" x="773" y="241">Score with observed outer responses</text>
-    <text class="annotation" x="773" y="263">Downstream and target-specific MSE</text>
+    <path class="flow arrow" d="M902 218v26"/>
+    <text class="meta" x="914" y="237">FIX WEIGHTS</text>
+    <rect x="714" y="249" width="376" height="96" rx="10" fill="#edf6f8" stroke="#c6dfe5"/>
+    <text class="label" x="732" y="274">Fixed forecast for the held-out query</text>
+    <text x="732" y="300" font-size="19">B + (1 − λ)aU + λ(bC + cW)</text>
+    <text class="small" x="732" y="325">Signed RNA change · B is the reference term</text>
   </g>
 
-  <text class="annotation" x="28" y="323">Joint holdout excludes either held-out identity from training. Outer query rows contain both held-out identities.</text>
+  <g aria-label="Scoring only">
+    <rect x="23" y="375" width="1074" height="112" rx="13" fill="#f5f9fa" stroke="#dce7ec"/>
+    <text class="meta" x="42" y="404">SCORING ONLY</text>
+    <text class="label" x="42" y="433">Observed RNA contrast</text>
+    <text class="small" x="42" y="457">Targeted RNA − matched NTC half 1</text>
+    <text class="small" x="42" y="476">Disjoint from the query control</text>
+
+    <path class="flow arrow" d="M333 439h172"/>
+    <rect x="514" y="391" width="568" height="81" rx="10" fill="#fff" stroke="#ccdde4"/>
+    <text class="label" x="532" y="419">Compare measured and predicted responses</text>
+    <text class="small" x="532" y="443">Masked target-macro MSE · uncentred and within-animal-centred</text>
+    <text class="small" x="532" y="462">Response amplitude and signed direction</text>
+    <path class="flow arrow" d="M902 345v40"/>
+  </g>
 </svg>
+
+

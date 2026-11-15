@@ -1,4 +1,4 @@
-# Figure 4 · A549 ComboSciPlex
+# Figure 5 · A549 ComboSciPlex
 
 The replay uses the public A549 cell-line experiment from [GEO GSE206741](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE206741) and the matching [processed archive](https://zenodo.org/records/14638780). It refits a composition and within-state predictor on the same leave-one-pair-out folds as four comparators. The archived mouse model is outside this analysis.
 
